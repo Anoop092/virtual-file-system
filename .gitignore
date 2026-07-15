@@ -1,0 +1,59 @@
+# ===========================
+# IntelliJ IDEA
+# ===========================
+.idea/
+*.iml
+out/
+
+# ===========================
+# Maven
+# ===========================
+target/
+
+# Maven Wrapper (keep these if you use Maven Wrapper)
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/maven-wrapper.xml
+
+# ===========================
+# Logs
+# ===========================
+*.log
+
+# ===========================
+# OS Files
+# ===========================
+.DS_Store
+Thumbs.db
+
+# ===========================
+# Temporary Files
+# ===========================
+*.tmp
+*.swp
+*.bak
+
+# ===========================
+# Generated Files
+# ===========================
+dependency-reduced-pom.xml
+
+# ===========================
+# Environment Files
+# ===========================
+.env
+.env.*
+
+# ===========================
+# VS Code (if opened occasionally)
+# ===========================
+.vscode/
+
+# ===========================
+# Eclipse (if imported)
+# ===========================
+.project
+.classpath
+.settings/
+
+data/
