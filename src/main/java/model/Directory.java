@@ -46,6 +46,7 @@ public class Directory extends FileSystems{
         return this.childrens.get(name);
     }
     public void deleteDirectory(String name){
+        if(name == null) throw new RuntimeException("name cannot be null");
         if(name.isBlank()) throw new RuntimeException("name cannot be blank");
         if(!hasPermission(Permission.WRITE)) throw new RuntimeException("Permission Denied");
         FileSystems child = getChild(name);
@@ -63,6 +64,7 @@ public class Directory extends FileSystems{
         return new ArrayList<>(childrens.values());
     }
     public void createFile(String name){
+        if(name == null) throw new RuntimeException("file name cannot be null");
         if(name.isBlank()) throw  new IllegalArgumentException("Cannot be empty");
         if(!hasPermission(Permission.WRITE)) throw new RuntimeException("permission denied");
         if(childrens.containsKey(name)) throw  new IllegalArgumentException("File already exist");
