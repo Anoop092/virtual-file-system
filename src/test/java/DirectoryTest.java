@@ -135,6 +135,154 @@ public class DirectoryTest {
         assertNotNull(child.getChild("hello.txt"));
         assertEquals(1,root.getChildren().size());
     }
+    @Test
+    void shouldThrowExceptionWhenDeletingDirectoryWithoutWritePermission(){
+        root.createDirectory("docs");
+        root.revokePermission(Permission.WRITE);
+        assertThrows(RuntimeException.class,()-> root.deleteDirectory("docs"));
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenDeletingFileUsingDeleteDirectory(){
+        root.createFile("hello.txt");
+        assertThrows(RuntimeException.class,()-> root.deleteDirectory("hello.txt"));
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenDeletingDirectoryThatDoesNotExists(){
+        assertThrows(RuntimeException.class,()-> root.deleteDirectory("hello"));
+        assertEquals(0,root.getChildren().size());
+    }
+    @Test
+    void shouldDeleteFileSuccessfully(){
+        root.createFile("hello.txt");
+        FileSystems fs = root.getChild("hello.txt");
+        root.deleteFile("hello.txt");
+        assertNull(root.getChild("hello.txt"));
+        assertNull(fs.getParent());
+        assertEquals(0,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenDeletingFileWithoutName(){
+        assertThrows(RuntimeException.class, ()->root.deleteFile(null));
+        assertEquals(0,root.getChildren().size());
+
+    }
+    @Test
+    void shouldThrowExceptionWhenDeletingFileWithEmptyName(){
+        assertThrows(RuntimeException.class, ()->root.deleteFile(""));
+        assertEquals(0,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenDeletingFileWithNameIsBlank(){
+        assertThrows(RuntimeException.class, ()->root.deleteFile("    "));
+        assertEquals(0,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenDeletingFileThatDoesNotExists(){
+        assertThrows(RuntimeException.class, ()->root.deleteFile("hello.txt"));
+        assertEquals(0,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenDeletingDirectoryWithDeletingFile(){
+        root.createDirectory("dir");
+        assertThrows(RuntimeException.class,()->root.deleteFile("dir"));
+        assertNotNull(root.getChild("dir"));
+    }
+    @Test
+    void shouldThrowExceptionWhenDeletingFileWithoutWritePermission(){
+        root.createFile("hello.txt");
+        root.revokePermission(Permission.WRITE);
+        assertThrows(RuntimeException.class ,()-> root.deleteFile("hello.txt"));
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldRenameFileSuccessFully(){
+        root.createFile("hello.txt");
+        FileSystems oldFs = root.getChild("hello.txt");
+        root.rename("hello.txt","notes.txt");
+        FileSystems newFs = root.getChild("notes.txt");
+
+        assertNull(root.getChild("hello.txt"));
+        assertNotNull(root.getChild("notes.txt"));
+        assertSame(oldFs,newFs);
+        assertEquals(root,root.getChild("notes.txt").getParent());
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenOldNameIsNull(){
+        root.createFile("hello.txt");
+        assertThrows(RuntimeException.class,()->root.rename(null,"notes.txt"));
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenNewNameIsNull(){
+        root.createFile("hello.txt");
+        assertThrows(RuntimeException.class,()->root.rename("hello.txt",null));
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenOldNameIsEmpty(){
+        root.createFile("hello.txt");
+        assertThrows(RuntimeException.class,()->root.rename("","notes.txt"));
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenNewFileNameIsEmpty(){
+        root.createFile("hello.txt");
+        assertThrows(RuntimeException.class,()->root.rename("hello.txt",""));
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenNewFileNameIsWhiteSpace(){
+        root.createFile("hello.txt");
+        assertThrows(RuntimeException.class,()->root.rename("hello.txt","    "));
+        assertEquals(1,root.getChildren().size());
+    }
+    @Test
+    void shouldThrowExceptionWhenOldFileNameIsWhiteSpace(){
+        root.createFile("hello.txt");
+        assertThrows(RuntimeException.class,()->root.rename("       ","notes.txt"));
+        assertNull(root.getChild("notes.txt"));
+    }
+    @Test
+    void shouldThrowExceptionWhenFileDoesNotHaveWritePermission(){
+        root.createFile("hello.txt");
+        root.revokePermission(Permission.WRITE);
+        assertThrows(RuntimeException.class,()-> root.rename("hello.txt","new.txt"));
+        assertNull(root.getChild("new.txt"));
+    }
+    @Test
+    void shouldThrowExceptionWhileSourceFileAlreadyExists(){
+        root.createFile("notes.txt");
+
+        assertThrows(RuntimeException.class,
+                () -> root.rename("hello.txt", "notes.txt"));
+
+        assertNotNull(root.getChild("notes.txt"));
+        assertNull(root.getChild("hello.txt"));
+        assertEquals(1, root.getChildren().size());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenDestinationAlreadyExists(){
+        root.createFile("hello.txt");
+        root.createFile("notes.txt");
+        assertThrows(RuntimeException.class,()->root.rename("hello.txt","notes.txt"));
+    }
+    @Test
+    void shouldDoNothingWhenOldAndNewNamesAreSame() {
+        root.createFile("hello.txt");
+
+        FileSystems original = root.getChild("hello.txt");
+
+        root.rename("hello.txt", "hello.txt");
+
+        assertSame(original, root.getChild("hello.txt"));
+        assertEquals(1, root.getChildren().size());
+        assertEquals(root, original.getParent());
+    }
+
 
 
 }

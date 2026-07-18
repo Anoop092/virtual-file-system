@@ -72,6 +72,7 @@ public class Directory extends FileSystems{
         addChild(fs);
     }
     public void deleteFile(String name){
+        if(name == null) throw new RuntimeException("name cannot be null");
         if(name.isBlank()) throw new RuntimeException("name cannot be blank");
         if(!hasPermission(Permission.WRITE)) throw new RuntimeException("Permission Denied");
         FileSystems child = getChild(name);
